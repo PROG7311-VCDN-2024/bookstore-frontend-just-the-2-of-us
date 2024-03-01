@@ -1,6 +1,7 @@
 ﻿using LastLastChance.Data.Cart;
 using LastLastChance.Data.Services;
 using LastLastChance.Data.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -18,7 +19,7 @@ namespace LastLastChance.Controllers
             _shoppingCart = shoppingCart;
             _ordersService = ordersService;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -27,7 +28,7 @@ namespace LastLastChance.Controllers
             var orders = await _ordersService.GetOrdersByUserIdAndRoleAsync(userId, userRole);
             return View(orders);
         }
-
+        [Authorize]
         public IActionResult ShoppingCart()
         {
             var items = _shoppingCart.GetShoppingCartItems();
@@ -42,6 +43,7 @@ namespace LastLastChance.Controllers
             return View(response);
         }
 
+        [Authorize]
         public async Task<IActionResult> AddItemToShoppingCart(int id)
         {
             var item = await _bookService.GetBookByIdAsync(id);
@@ -52,7 +54,7 @@ namespace LastLastChance.Controllers
             }
             return RedirectToAction(nameof(ShoppingCart));
         }
-
+        [Authorize]
         public async Task<IActionResult> RemoveItemFromShoppingCart(int id)
         {
             var item = await _bookService.GetBookByIdAsync(id);
@@ -63,7 +65,7 @@ namespace LastLastChance.Controllers
             }
             return RedirectToAction(nameof(ShoppingCart));
         }
-
+        [Authorize]
         public async Task<IActionResult> CompleteOrder()
         {
             var items = _shoppingCart.GetShoppingCartItems();
