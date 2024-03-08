@@ -86,6 +86,36 @@ namespace LastLastChance.Controllers
             return View("RegisterCompleted");
         }
 
+        public IActionResult CreateNewAdmin() => View(new RegisterVM());
+        //Add new admin
+        [HttpPost]
+        public async Task<IActionResult> CreateNewAdmin(RegisterVM registerVM)
+        {
+            if (!ModelState.IsValid) return View(registerVM);
+
+            var user = await _userManager.FindByEmailAsync(registerVM.EmailAddress);
+            if(user != null)
+            {
+                TempData["Error"] = "This email address is already in use";
+                return View(registerVM);
+            }
+
+            var newAdmin = new ApplicationUser()
+            {
+                FullName = registerVM.FullName,
+                Email = registerVM.EmailAddress,
+                UserName = registerVM.EmailAddress
+            };
+            var newAdminResponse = await _userManager.CreateAsync(newAdmin, registerVM.Password);
+
+            if (newAdminResponse.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(newAdmin, UserRoles.Admin);
+            }
+
+            return View("RegisterCompleted");
+        }
+
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
@@ -96,6 +126,15 @@ namespace LastLastChance.Controllers
         public IActionResult AccessDenied(string ReturnUrl)
         {
             return View();
+        }
+
+        public IActionResult ViewAllOrders() => View(new List<Order>());
+
+        [HttpPost]
+        public async Task<IActionResult> ViewAllOrders(List<Order> orders)
+        {
+            orders = await _context.Orders.Include(o => o.User).Include(o => o.OrderItems).ToListAsync();
+            return View(orders);
         }
     }
 }

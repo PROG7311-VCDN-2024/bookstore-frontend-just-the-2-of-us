@@ -1,0 +1,11 @@
+﻿@model string
+
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <div style="position: fixed; right: 25px; bottom: 125px;" class="text-white">
+        <a asp-controller="@Model" asp-action="ViewAllOrders" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> View All Orders
+        </a>
+    </div>
+
+}
