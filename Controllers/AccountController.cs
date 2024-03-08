@@ -128,13 +128,30 @@ namespace LastLastChance.Controllers
             return View();
         }
 
-        public IActionResult ViewAllOrders() => View(new List<Order>());
+        //public IActionResult ViewAllOrders() => View(new List<Order>());
 
-        [HttpPost]
-        public async Task<IActionResult> ViewAllOrders(List<Order> orders)
+        //[HttpPost]
+        public async Task<IActionResult> ViewAllOrders()
         {
-            orders = await _context.Orders.Include(o => o.User).Include(o => o.OrderItems).ToListAsync();
-            return View(orders);
+            try
+            {
+                var orders = await _context.Orders
+                                            .Include(o => o.User)
+                                            .Include(o => o.OrderItems)
+                                            .ToListAsync();
+
+                if (orders == null || orders.Count == 0)
+                {
+                    ViewBag.ErrorMessage = "No orders found.";
+                }
+
+                return View(orders);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Error occurred while fetching orders: " + ex.Message;
+                return View();
+            }
         }
     }
 }

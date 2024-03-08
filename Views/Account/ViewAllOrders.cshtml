@@ -8,27 +8,46 @@
 }
 else
 {
+
     <h1>All Orders</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>User</th>
-                <th>Order ID</th>
-                <th>Customer Email</th>
-                <th>Number Of Items</th>
-            </tr>
-        </thead>
-        <tbody>
+
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+    {
+        <p>@ViewBag.ErrorMessage</p>
+    }
+    else
+    {
+        <div class="row">
             @foreach (var order in Model)
             {
-                <tr>
-                    <td>@order.User.FullName</td>
-                    <td>@order.Id</td>
-                    <td>@order.Email</td>
-                    <td>@order.OrderItems.Count</td>
-                </tr>
+                <div class="col-md-4 col-xs-6 border-primary mb-3">
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="card-header text-white bg-info">
+                            <h5 class="card-title">User: @order.User.FullName</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer Email</th>
+                                        <th>Number Of Items</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>@order.Id</td>
+                                        <td>@order.Email</td>
+                                        <td>@order.OrderItems.Count</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+        </div>
+    }
+    
 }
 
